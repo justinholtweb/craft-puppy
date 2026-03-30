@@ -1,0 +1,315 @@
+/* ==========================================================================
+   Puppy — CP Companion Overlay
+   ========================================================================== */
+
+#puppy-panel {
+    position: fixed;
+    z-index: 100100;
+    width: 320px;
+    max-height: 480px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    color: #3f4d5a;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.2s ease, max-height 0.2s ease, border-radius 0.2s ease;
+    user-select: none;
+}
+
+#puppy-panel.is-collapsed {
+    width: auto;
+    max-height: none;
+    border-radius: 24px;
+}
+
+/* ---------- Header / Drag Handle ---------- */
+
+.puppy-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #1c2e42;
+    color: #fff;
+    border-radius: 8px 8px 0 0;
+    cursor: grab;
+    flex-shrink: 0;
+}
+
+.puppy-header:active {
+    cursor: grabbing;
+}
+
+.is-collapsed .puppy-header {
+    border-radius: 24px;
+    padding: 8px 14px;
+}
+
+.puppy-logo {
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.puppy-title {
+    font-size: 13px;
+    font-weight: 600;
+    flex: 1;
+    white-space: nowrap;
+}
+
+.puppy-badge {
+    background: #e55b5b;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 10px;
+    padding: 0 6px;
+    flex-shrink: 0;
+}
+
+.puppy-header-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.puppy-header-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 2px 4px;
+    font-size: 14px;
+    line-height: 1;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.puppy-header-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ---------- Tabs ---------- */
+
+.puppy-tabs {
+    display: flex;
+    border-bottom: 1px solid #e3e5e8;
+    flex-shrink: 0;
+}
+
+.puppy-tab {
+    flex: 1;
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: #8f98a3;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.puppy-tab:hover {
+    color: #3f4d5a;
+}
+
+.puppy-tab.is-active {
+    color: #1c2e42;
+    border-bottom-color: #1c2e42;
+}
+
+/* ---------- Body ---------- */
+
+.puppy-body {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.puppy-tab-content {
+    display: none;
+    padding: 8px 0;
+}
+
+.puppy-tab-content.is-active {
+    display: block;
+}
+
+/* ---------- Trail / Edit Items ---------- */
+
+.puppy-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 14px;
+    text-decoration: none;
+    color: #3f4d5a;
+    transition: background 0.1s;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+.puppy-item:hover {
+    background: #f3f5f7;
+}
+
+.puppy-item-icon {
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+    font-size: 13px;
+    padding-top: 1px;
+    opacity: 0.55;
+}
+
+.puppy-item-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.puppy-item-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.puppy-item-meta {
+    font-size: 11px;
+    color: #8f98a3;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.puppy-item-action {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 1px 5px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.puppy-item-action[data-action="saved"] {
+    color: #2e7d32;
+    background: #e8f5e9;
+}
+
+.puppy-item-action[data-action="created"] {
+    color: #1565c0;
+    background: #e3f2fd;
+}
+
+.puppy-item-action[data-action="visited"] {
+    color: #8f98a3;
+    background: #f3f5f7;
+}
+
+/* ---------- Empty State ---------- */
+
+.puppy-empty {
+    padding: 24px 14px;
+    text-align: center;
+    color: #8f98a3;
+    font-size: 12px;
+}
+
+/* ---------- Footer ---------- */
+
+.puppy-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    border-top: 1px solid #e3e5e8;
+    font-size: 11px;
+    color: #8f98a3;
+    flex-shrink: 0;
+}
+
+.puppy-footer-btn {
+    background: none;
+    border: none;
+    color: #8f98a3;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.puppy-footer-btn:hover {
+    color: #e55b5b;
+    background: #fdf0f0;
+}
+
+/* ---------- Scrollbar ---------- */
+
+.puppy-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.puppy-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.puppy-body::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+}
+
+/* ---------- Stats ---------- */
+
+.puppy-stats {
+    display: flex;
+    gap: 12px;
+    padding: 12px 14px;
+    flex-wrap: wrap;
+}
+
+.puppy-stat {
+    text-align: center;
+    flex: 1;
+    min-width: 60px;
+}
+
+.puppy-stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1c2e42;
+    line-height: 1.2;
+}
+
+.puppy-stat-label {
+    font-size: 10px;
+    color: #8f98a3;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+}
+
+/* ---------- Paused State ---------- */
+
+#puppy-panel.is-paused .puppy-header {
+    background: #6b7280;
+}

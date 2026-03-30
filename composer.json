@@ -1,0 +1,27 @@
+{
+    "name": "justinholtweb/craft-puppy",
+    "description": "A lightweight Craft CMS 5 control panel companion that follows editors through their session, tracking visited pages, edits, and providing quick links back.",
+    "version": "1.0.0",
+    "type": "craft-plugin",
+    "license": "proprietary",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^8.2",
+        "craftcms/cms": "^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "justinholtweb\\puppy\\": "src/"
+        }
+    },
+    "extra": {
+        "handle": "puppy",
+        "name": "Puppy",
+        "developer": "Justin Holt",
+        "developerUrl": "https://justinholtweb.com",
+        "description": "A control panel companion that tracks your session trail.",
+        "class": "justinholtweb\\puppy\\Plugin",
+        "hasCpSection": false
+    }
+}
