@@ -1,7 +1,7 @@
 {
     "name": "justinholtweb/craft-puppy",
     "description": "A lightweight Craft CMS 5 control panel companion that follows editors through their session, tracking visited pages, edits, and providing quick links back.",
-    "version": "1.0.0",
+    "version": "5.0.0",
     "type": "craft-plugin",
     "license": "proprietary",
     "minimum-stability": "dev",
