@@ -25,6 +25,7 @@ class SessionController extends Controller
     public function actionGetTrail(): Response
     {
         $this->requireCpRequest();
+        $this->requireAcceptsJson();
 
         $data = Plugin::getInstance()->trail->getSessionData();
 
@@ -40,6 +41,7 @@ class SessionController extends Controller
     {
         $this->requireCpRequest();
         $this->requirePostRequest();
+        $this->requireAcceptsJson();
 
         $request = Craft::$app->getRequest();
 
@@ -69,6 +71,7 @@ class SessionController extends Controller
     {
         $this->requireCpRequest();
         $this->requirePostRequest();
+        $this->requireAcceptsJson();
 
         Plugin::getInstance()->trail->clearSession();
 

@@ -13,6 +13,8 @@ use yii\base\Event;
 
 /**
  * Puppy — a lightweight CP companion that follows editors through their session.
+ *
+ * @property-read Trail $trail
  */
 class Plugin extends BasePlugin
 {
@@ -31,7 +33,9 @@ class Plugin extends BasePlugin
     {
         parent::init();
 
-        if (!Craft::$app->getRequest()->getIsCpRequest() || Craft::$app->getRequest()->getIsConsoleRequest()) {
+        $request = Craft::$app->getRequest();
+
+        if ($request->getIsConsoleRequest() || !$request->getIsCpRequest()) {
             return;
         }
 
@@ -40,29 +44,32 @@ class Plugin extends BasePlugin
     }
 
     /**
-     * Register the Puppy asset bundle on every CP page load.
+     * Register the Puppy asset bundle on CP page loads for authenticated users only.
      */
     private function _registerAssetBundle(): void
     {
         Event::on(
             View::class,
             View::EVENT_BEFORE_RENDER_TEMPLATE,
-            function () {
+            function() {
+                // Skip login, forgot-password, set-password, and any other pre-auth CP pages
+                if (Craft::$app->getUser()->getIsGuest()) {
+                    return;
+                }
+
                 $view = Craft::$app->getView();
                 $view->registerAssetBundle(PuppyAsset::class);
 
-                // Pass the action URL and CSRF token to the frontend
-                $actionUrl = '/actions/puppy/session';
                 $view->registerJs(
                     'window.PuppyConfig = ' . json_encode([
-                        'actionUrl' => $actionUrl,
+                        'actionUrl' => '/actions/puppy/session',
                         'csrfTokenName' => Craft::$app->getConfig()->getGeneral()->csrfTokenName,
                         'csrfTokenValue' => Craft::$app->getRequest()->getCsrfToken(),
                         'cpUrl' => Craft::$app->getRequest()->getPathInfo(),
                     ]) . ';',
-                    View::POS_HEAD
+                    View::POS_HEAD,
                 );
-            }
+            },
         );
     }
 
@@ -74,11 +81,16 @@ class Plugin extends BasePlugin
         Event::on(
             Element::class,
             Element::EVENT_AFTER_SAVE,
-            function (ModelEvent $event) {
+            function(ModelEvent $event) {
+                // Only record edits for logged-in CP users
+                if (Craft::$app->getUser()->getIsGuest()) {
+                    return;
+                }
+
                 /** @var Element $element */
                 $element = $event->sender;
 
-                // Skip revisions and drafts being auto-saved
+                // Skip revisions
                 if ($element->getIsRevision()) {
                     return;
                 }
@@ -86,7 +98,7 @@ class Plugin extends BasePlugin
                 $action = $event->isNew ? 'created' : 'saved';
 
                 $this->trail->recordEdit($element, $action);
-            }
+            },
         );
     }
 }
