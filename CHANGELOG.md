@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.4 - 2026-04-15
+
+### Fixed
+
+- Puppy panel now stays fully visible within the viewport. Added edge-aware clamping during drag, on window resize, on initial load, and when toggling collapsed/expanded state.
+
 ## 5.0.3 - 2026-04-15
 
 ### Changed

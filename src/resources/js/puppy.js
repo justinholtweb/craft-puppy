@@ -145,7 +145,7 @@
         panel.appendChild(footer);
         document.body.appendChild(panel);
 
-        // Restore position
+        // Restore position (initial set, then clamp after layout)
         const savedPos = getSavedPosition();
         panel.style.right = savedPos.right + 'px';
         panel.style.bottom = savedPos.bottom + 'px';
@@ -157,6 +157,12 @@
         bindFooterActions(panel);
         updateCollapsedState(panel);
         renderStats();
+
+        // Clamp to viewport after the panel has been laid out
+        requestAnimationFrame(function () { ensureInViewport(panel); });
+
+        // Re-clamp when the viewport changes
+        window.addEventListener('resize', function () { ensureInViewport(panel); });
     }
 
     // =======================================================================
@@ -294,10 +300,12 @@
             if (!dragging) return;
             const dx = startX - e.clientX;
             const dy = startY - e.clientY;
-            const newRight = Math.max(0, Math.min(window.innerWidth - 60, startRight + dx));
-            const newBottom = Math.max(0, Math.min(window.innerHeight - 60, startBottom + dy));
-            panel.style.right = newRight + 'px';
-            panel.style.bottom = newBottom + 'px';
+            const clamped = clampToViewport({
+                right: startRight + dx,
+                bottom: startBottom + dy,
+            }, panel);
+            panel.style.right = clamped.right + 'px';
+            panel.style.bottom = clamped.bottom + 'px';
         });
 
         document.addEventListener('mouseup', () => {
@@ -340,6 +348,9 @@
         if (tabs) tabs.style.display = isCollapsed ? 'none' : '';
         if (body) body.style.display = isCollapsed ? 'none' : '';
         if (footer) footer.style.display = isCollapsed ? 'none' : '';
+
+        // Panel size changed — re-clamp so it stays in viewport
+        requestAnimationFrame(function () { ensureInViewport(panel); });
     }
 
     // =======================================================================
@@ -601,8 +612,19 @@
     }
 
     // =======================================================================
-    // Position Persistence
+    // Position Persistence & Viewport Clamping
     // =======================================================================
+
+    function clampToViewport(pos, panel) {
+        var panelWidth = panel ? panel.offsetWidth : 320;
+        var panelHeight = panel ? panel.offsetHeight : 480;
+        var maxRight = Math.max(0, window.innerWidth - panelWidth);
+        var maxBottom = Math.max(0, window.innerHeight - panelHeight);
+        return {
+            right: Math.max(0, Math.min(maxRight, pos.right)),
+            bottom: Math.max(0, Math.min(maxBottom, pos.bottom)),
+        };
+    }
 
     function getSavedPosition() {
         try {
@@ -622,6 +644,16 @@
             bottom: parseInt(panel.style.bottom) || 20,
         };
         localStorage.setItem(STORAGE_KEY_POS, JSON.stringify(pos));
+    }
+
+    function ensureInViewport(panel) {
+        var current = {
+            right: parseInt(panel.style.right) || 20,
+            bottom: parseInt(panel.style.bottom) || 20,
+        };
+        var clamped = clampToViewport(current, panel);
+        panel.style.right = clamped.right + 'px';
+        panel.style.bottom = clamped.bottom + 'px';
     }
 
     // =======================================================================
