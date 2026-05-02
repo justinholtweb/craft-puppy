@@ -19,7 +19,7 @@
         "handle": "puppy",
         "name": "Puppy",
         "developer": "Justin Holt",
-        "developerUrl": "https://justinholtweb.com",
+        "developerUrl": "https://justinholt.com",
         "description": "A control panel companion that tracks your session trail.",
         "class": "justinholtweb\\puppy\\Plugin",
         "hasCpSection": false
