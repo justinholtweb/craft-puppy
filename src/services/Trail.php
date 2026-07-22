@@ -22,19 +22,34 @@ class Trail extends Component
     private const MAX_TRAIL_ITEMS = 100;
     private const MAX_EDIT_ITEMS = 50;
 
+    // Mirrors the validation rules on TrailItem. Items are stored in the session
+    // rather than validated one by one, so the limits are enforced here to keep
+    // an oversized label or URL from bloating the session.
+    private const MAX_LABEL_LENGTH = 255;
+    private const MAX_URL_LENGTH = 2048;
+    private const MAX_CONTEXT_LENGTH = 255;
+
     /**
      * Record a page visit from the frontend.
      */
     public function recordVisit(string $url, string $label, string $type = 'route', ?int $elementId = null, ?string $context = null): void
     {
+        // A truncated URL would be a broken link, so overlong ones are dropped
+        // rather than trimmed.
+        if (mb_strlen($url) > self::MAX_URL_LENGTH) {
+            return;
+        }
+
         $item = new TrailItem();
         $item->type = $type;
         $item->action = 'visited';
-        $item->label = $label;
+        $item->label = $this->_truncate($label, self::MAX_LABEL_LENGTH);
         $item->url = $url;
         $item->elementId = $elementId;
         $item->timestamp = time();
-        $item->context = $context;
+        $item->context = $context !== null
+            ? $this->_truncate($context, self::MAX_CONTEXT_LENGTH)
+            : null;
 
         $trail = $this->getTrail();
 
@@ -57,13 +72,17 @@ class Trail extends Component
         $item = new TrailItem();
         $item->type = $this->_resolveElementType($element);
         $item->action = $action;
-        $item->label = $this->_resolveElementLabel($element);
+        $item->label = $this->_truncate($this->_resolveElementLabel($element), self::MAX_LABEL_LENGTH);
         $item->url = $this->_resolveElementCpUrl($element);
         $item->elementId = $element->id;
         $item->timestamp = time();
-        $item->context = $this->_resolveElementContext($element);
 
-        if (empty($item->label) || empty($item->url)) {
+        $context = $this->_resolveElementContext($element);
+        $item->context = $context !== null
+            ? $this->_truncate($context, self::MAX_CONTEXT_LENGTH)
+            : null;
+
+        if (empty($item->label) || empty($item->url) || mb_strlen($item->url) > self::MAX_URL_LENGTH) {
             return;
         }
 
@@ -155,6 +174,16 @@ class Trail extends Component
         }
 
         return null;
+    }
+
+    /**
+     * Trims a value to a maximum number of characters, multibyte-safely.
+     */
+    private function _truncate(string $value, int $maxLength): string
+    {
+        return mb_strlen($value) > $maxLength
+            ? mb_substr($value, 0, $maxLength)
+            : $value;
     }
 
     private function _getSession(string $key): ?array

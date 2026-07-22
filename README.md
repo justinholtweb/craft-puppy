@@ -34,6 +34,8 @@ Puppy records where you go in the control panel and normalizes routes into reada
 
 Puppy listens for element save events on the backend and records them separately from page visits. Each edit captures the element type, title, action (saved or created), and section/volume context.
 
+Only deliberate saves of the canonical element are recorded. Revisions, drafts (including the provisional drafts Craft autosaves while you type), propagated multi-site saves, and bulk resave jobs are all ignored.
+
 ### Floating Panel
 
 The overlay sits on top of the control panel and includes:
@@ -80,6 +82,22 @@ src/
     ├── js/puppy.js                     # Floating panel, drag, tabs, route parsing
     └── css/puppy.css                   # Panel styles
 ```
+
+## Development
+
+The repository ships with a [DDEV](https://ddev.readthedocs.io) environment and a
+Codeception test suite built on Craft's own testing framework.
+
+```bash
+ddev start
+ddev composer install
+cp tests/.env.example tests/.env   # already matches the bundled DDEV setup
+ddev exec vendor/bin/codecept run unit
+```
+
+The suite installs a throwaway Craft instance into the `craft_test` database on
+each run, installs Puppy into it, and exercises the plugin's services,
+controller, model and event listeners.
 
 ## Roadmap
 

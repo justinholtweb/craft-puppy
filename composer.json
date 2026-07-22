@@ -1,7 +1,7 @@
 {
     "name": "justinholtweb/craft-puppy",
     "description": "A lightweight Craft CMS 5 control panel companion that follows editors through their session, tracking visited pages, edits, and providing quick links back.",
-    "version": "5.0.4",
+    "version": "5.0.5",
     "type": "craft-plugin",
     "license": "proprietary",
     "minimum-stability": "dev",
@@ -23,5 +23,26 @@
         "description": "A control panel companion that tracks your session trail.",
         "class": "justinholtweb\\puppy\\Plugin",
         "hasCpSection": false
+    },
+    "require-dev": {
+        "codeception/codeception": "^5.0",
+        "codeception/module-asserts": "^3.0",
+        "codeception/module-datafactory": "^3.0",
+        "codeception/module-phpbrowser": "^3.0",
+        "codeception/module-rest": "^3.0",
+        "codeception/module-yii2": "^1.1",
+        "vlucas/phpdotenv": "^5.4",
+        "fakerphp/faker": "^1.19",
+        "league/factory-muffin": "^3.3"
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true,
+            "php-http/discovery": true
+        }
+    },
+    "scripts": {
+        "test": "codecept run unit"
     }
 }

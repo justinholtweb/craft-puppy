@@ -6,6 +6,7 @@ use Craft;
 use craft\base\Plugin as BasePlugin;
 use craft\base\Element;
 use craft\events\ModelEvent;
+use craft\helpers\UrlHelper;
 use craft\web\View;
 use justinholtweb\puppy\assetbundles\puppy\PuppyAsset;
 use justinholtweb\puppy\services\Trail;
@@ -62,7 +63,7 @@ class Plugin extends BasePlugin
 
                 $view->registerJs(
                     'window.PuppyConfig = ' . json_encode([
-                        'actionUrl' => '/actions/puppy/session',
+                        'actionUrl' => UrlHelper::actionUrl('puppy/session'),
                         'csrfTokenName' => Craft::$app->getConfig()->getGeneral()->csrfTokenName,
                         'csrfTokenValue' => Craft::$app->getRequest()->getCsrfToken(),
                         'cpUrl' => Craft::$app->getRequest()->getPathInfo(),
@@ -90,8 +91,16 @@ class Plugin extends BasePlugin
                 /** @var Element $element */
                 $element = $event->sender;
 
-                // Skip revisions
-                if ($element->getIsRevision()) {
+                // Only record deliberate saves of the canonical element. This skips
+                // revisions, drafts (including the provisional drafts Craft autosaves
+                // every few seconds while editing), the extra saves that multi-site
+                // propagation fires, and bulk resave jobs.
+                if (
+                    $element->getIsRevision() ||
+                    $element->getIsDraft() ||
+                    $element->propagating ||
+                    $element->resaving
+                ) {
                     return;
                 }
 

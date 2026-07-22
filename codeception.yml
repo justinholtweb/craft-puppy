@@ -1,0 +1,26 @@
+actor: Tester
+paths:
+  tests: tests
+  output: tests/_output
+  data: tests/_data
+  support: tests/_support
+  envs: tests/_envs
+bootstrap: _bootstrap.php
+settings:
+  colors: true
+  memory_limit: 1024M
+params:
+  - tests/.env
+modules:
+  config:
+    \craft\test\Craft:
+      configFile: 'tests/_craft/config/test.php'
+      entryUrl: 'https://craft-puppy.ddev.site/index.php'
+      projectConfig: {}
+      migrations: []
+      plugins:
+        - class: \justinholtweb\puppy\Plugin
+          handle: puppy
+      cleanup: true
+      transaction: true
+      dbSetup: {clean: true, setupCraft: true}

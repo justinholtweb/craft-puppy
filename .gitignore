@@ -1,0 +1,14 @@
+/vendor
+/composer.lock
+# published by Craft's asset manager while tests run
+/cpresources
+/tests/.env
+/tests/_output/*
+!/tests/_output/.gitkeep
+/tests/_support/_generated
+/tests/_craft/storage/*
+!/tests/_craft/storage/runtime
+/tests/_craft/storage/runtime/*
+!/tests/_craft/storage/runtime/.gitkeep
+/tests/_craft/config/project
+.DS_Store

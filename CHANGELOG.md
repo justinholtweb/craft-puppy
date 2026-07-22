@@ -1,5 +1,20 @@
 # Changelog
 
+## 5.0.5 - 2026-07-22
+
+### Fixed
+
+- The Edits tab no longer fills up with autosaves. Provisional and explicit drafts fire `Element::EVENT_AFTER_SAVE` every few seconds while an entry is open in the CP; only saves of the canonical element are recorded now.
+- Saving an element on a multi-site install recorded one edit per propagated site. Propagated saves are now skipped, so a save shows up once.
+- Bulk resave jobs no longer flood the Edits tab with elements the editor never touched.
+- `PuppyConfig.actionUrl` was hardcoded to `/actions/puppy/session`, which was wrong for sites using a custom `actionTrigger` or a subfolder install. It's now built with `UrlHelper::actionUrl()`.
+- Trail items are now held to the length limits `TrailItem` declares. Labels and context are truncated to 255 characters (multibyte-safe) and items with a URL over 2,048 characters are skipped, so an oversized value can't bloat the session.
+- Corrected the `developerUrl` in `composer.json`.
+
+### Added
+
+- DDEV environment and a Codeception test suite covering the Trail service, TrailItem model, SessionController and the element-save listener.
+
 ## 5.0.4 - 2026-04-15
 
 ### Fixed
